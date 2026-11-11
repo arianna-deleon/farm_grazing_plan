@@ -60,6 +60,8 @@ class GrazingEventComplete extends QuickFormBase {
       '#options' => $options,
       '#default_value' => $default,
       '#required' => TRUE,
+      '#min' => 1,
+      '#max' => 150,
     ];
 
     return $form;
@@ -107,10 +109,10 @@ class GrazingEventComplete extends QuickFormBase {
         // Iterate through grazing events.
         foreach ($grazing_events as $grazing_event) {
 
-          // If the grazing event is not pending, skip it.
-          if ($grazing_event->getStatus() !== 'pending') {
-            continue;
-          }
+        //   // If the grazing event is not pending, skip it.
+        //   if ($grazing_event->getStatus() !== 'pending') {
+        //     continue;
+        //   }
 
           // Build the option label, keeping the start value for sorting.
           $options[$grazing_event->id()] = [
@@ -145,8 +147,14 @@ class GrazingEventComplete extends QuickFormBase {
     $grazing_event = $this->entityTypeManager->getStorage('plan_record')->load($form_state->getValue('grazing_event'));
 
     // If the selected grazing event is missing or not pending, show an error.
-    if (!$grazing_event || $grazing_event->bundle() !== 'grazing_event' || $grazing_event->getStatus() !== 'pending') {
-      $this->messenger()->addError($this->t('The selected grazing event does not exist or is not pending.'));
+    // if (!$grazing_event || $grazing_event->bundle() !== 'grazing_event' || $grazing_event->getStatus() !== 'pending') {
+    //   $this->messenger()->addError($this->t('The selected grazing event does not exist or is not pending.'));
+    //   return;
+    // }
+
+    // Only submit for existing completed grazing events
+    if (!$grazing_event || $grazing_event->bundle() !== 'grazing_event') {
+      $this->messenger()->addError($this->t('The selected grazing event does not exist.'));
       return;
     }
 
@@ -154,6 +162,12 @@ class GrazingEventComplete extends QuickFormBase {
     $plan = $grazing_event->getPlan();
     $log = $grazing_event->getLog();
 
+    // Check whether the log is pending.
+    if ($log->get('status')->value !== 'pending') {
+    $this->messenger()->addError($this->t('This grazing event is not pending.'));
+    return;
+    }
+    
     // If the user does not have access to update the plan or the log, show an
     // error.
     if (!$plan->access('update') || !$log->access('update')) {
