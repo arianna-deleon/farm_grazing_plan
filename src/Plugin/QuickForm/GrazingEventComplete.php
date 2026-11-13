@@ -60,8 +60,6 @@ class GrazingEventComplete extends QuickFormBase {
       '#options' => $options,
       '#default_value' => $default,
       '#required' => TRUE,
-      '#min' => 1,
-      '#max' => 150,
     ];
 
     return $form;
@@ -180,6 +178,24 @@ class GrazingEventComplete extends QuickFormBase {
 
     // Save the log.
     $log->save();
+
+    // Get user info.
+    $uid = (string) \Drupal::currentUser()->id();
+
+    // Store notification system.
+    $storage = \Drupal::keyValue('farm_grazing_plan_notifications');
+
+    //Retrieve previous notifications.
+    $notifications = $storage->get($uid, []);
+
+    // Add new completed event.
+    array_unshift($notifications, ['timestamp' => \Drupal::time()->getRequestTime(),]);
+    
+    // Keep 10 most recent notifications.
+    $notifications = array_slice($notifications, 0, 10);
+
+    // Save updated notifications
+    $storage->set($uid, $notifications);
 
     // Tell the user that the grazing event was completed.
     $this->messenger()->addMessage($this->t('Completed grazing event: %label', ['%label' => $grazing_event->label()]));
