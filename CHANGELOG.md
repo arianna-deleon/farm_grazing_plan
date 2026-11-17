@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-alpha6] 2026-10-12
+
+### Added
+
+- Add a "Complete grazing event" quick form that shows a dropdown of the next
+  pending grazing event for each asset in each grazing plan the user has
+  access to, and marks the selected event as done on submit.
+- Add a "Complete" button to the first pending grazing event in the grazing
+  events form, which redirects to the "Complete grazing event" quick form and
+  prepopulates the dropdown.
+- Add an "Abandon" button to all pending grazing events in the grazing events
+  form, which redirects to a confirmation form. A reason for abandoning can be
+  optionally provided.
+- Add `getAsset()`, `getLocation()`, and `getStatus()` methods to the grazing
+  event bundle class.
+
+### Changed
+
+- The "Add grazing event" form now collects the duration and recovery in
+  days. The values are converted to hours before being stored.
+
+### Fixed
+
+- Fix an error when saving the grazing events form for a plan that includes
+  an asset with no pending grazing events.
+
+## [1.0.0-alpha5] 2026-10-09
+
+### Added
+
+- Provide a form for editing all grazing events together.
+  - Add multiple pending grazing events for each asset.
+  - Show completed and pending events in separate tables.
+  - Only pending events can be edited.
+  - Completed events show the actual start date.
+  - Pending events show the pending start date.
+  - Log timestamps are updated automatically to match pending event start dates.
+  - Pending events can be rearranged via drag-and-drop.
+  - Unsaved pending events can be removed from the form before saving.
+  - The next planned movement date can be set per asset. Pending event start
+    dates are computed from it, and are recomputed automatically when the
+    order or planned durations change.
+
 ## [1.0.0-alpha4] 2026-10-02
 
 ### Added
@@ -88,8 +131,10 @@ Here is a summary of the major features this release provides:
   [svelte-gantt](https://github.com/ANovokmet/svelte-gantt), with the ability to
   view by asset or by location.
 
-[Unreleased]: https://github.com/mstenta/farm_grazing_plan/compare/1.0.0-alpha4...HEAD
-[1.0.0-alpha4]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha3
+[Unreleased]: https://github.com/mstenta/farm_grazing_plan/compare/1.0.0-alpha6...HEAD
+[1.0.0-alpha6]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha6
+[1.0.0-alpha5]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha5
+[1.0.0-alpha4]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha4
 [1.0.0-alpha3]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha3
 [1.0.0-alpha2]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha2
 [1.0.0-alpha1]: https://github.com/mstenta/farm_grazing_plan/releases/tag/1.0.0-alpha1
